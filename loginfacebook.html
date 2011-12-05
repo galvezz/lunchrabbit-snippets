@@ -1,0 +1,107 @@
+{% extends "people/misitio_base.html" %}
+{% block title %}Login User Form{% endblock %}
+{% block content %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+
+<!-- Facebook Login -->
+    <script type="text/javascript">
+        fblogin = function(success,fail){
+            FB.login(function(response) {
+                if (response.session){
+                    if(response.perms){
+                        if (success!=null){
+                            success();
+                        }
+                    } else {
+                        if (fail!=null){
+                            fail();
+                        }
+                    }
+                } else {
+                    fail();
+                }
+            },
+            {perms:'read_stream,publish_stream,offline_access,user_photos'});
+        };
+    </script>
+    
+<script type="text/javascript">
+    function fblogin_success(){
+            FB.api('/me', function(response) { 
+            $('#name').html(response.name);
+            $('#first_name').html(response.first_name);
+            $('#last_name').html(response.last_name);
+            $('#link').html(response.link);
+            $('#birthday').html(response.birthday);
+            $('#gender').html(response.gender);
+            $('#timezone').html(response.timezone);
+            $('#locale').html(response.locale);
+            $('#verified').html(''+response.verified);
+            $('#updated_time').html(response.updated_time);
+            $('#relationship_status').html(response.relationship_status);
+           // $('#education').html(response.education);
+            $('#other_information').show();
+        });
+    }
+    function fblogin_fail(){
+        alert('fail!');
+    }
+</script>
+
+<!-- Document Ready functions -->
+<script type="text/javascript">
+    //functions which are done when the document is ready
+    $(function(){
+        fblogin(fblogin_success,fblogin_fail);
+        //FB.logout();
+    });
+</script>
+    
+
+<h3>{{ message }}</h3>
+<form action="" method="post">
+        {% csrf_token %}
+<table>
+{{ lForm }}
+</table>
+<input type="submit" name="submit" value="Login" />
+</form>
+
+<div id="other_information" style="display: none;">
+            First Name: <span id="first_name"></span><br />
+            Last Name: <span id="last_name"></span><br />
+            Link: <span id="link"></span><br />
+            Birthday: <span id="birthday"></span><br />
+            Gender: <span id="gender"></span><br />
+            Timezone: <span id="timezone"></span><br />
+            Locale: <span id="locale"></span><br />
+            Verified: <span id="verified"></span><br />
+            Updated Time: <span id="updated_time"></span><br />
+            Relationship Status: <span id="relationship_status"></span><br />           
+            Education: <span id="education"></span><br />
+        </div>
+        
+<!-- <div class="fb-login-button" data-show-faces="true" data-width="400" data-max-rows="2"></div> -->
+
+
+    <div id="fb-root"></div>
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script>
+        FB.init({
+            appId  : '140673460239',
+            status : true,
+            cookie : true,
+            xfbml  : true
+        });
+    </script>  
+   <!--
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=140673460239";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script> -->
+
+{% endblock %} 
